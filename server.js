@@ -1,23 +1,16 @@
 const http = require("node:http");
 const url = require("node:url");
 const { Console } = require("node:console");
+const fs = require("node:fs");
 const maps = require("./mapHandlers");
-const fs = require("fs");
 
 const logger = new Console({
 	stdout: fs.createWriteStream("info.logs"),
 	stderr: fs.createWriteStream("errors.logs"),
 });
 
-const HOST = "localhost";
-const PORT = 3000;
-
-let helloMessage = JSON.stringify({ message: "Hello from API v1!" });
-let notFoundMessage = JSON.stringify({ error: "Resource not found" });
-
-let responseHeaders = { "Content-Type": "application/json" };
-
 function requestListener(request, response) {
+	let responseHeaders = { "Content-Type": "application/json" };
 	let { method, headers } = request;
 
 	let parsedUrl = url.parse(request.url, true);
@@ -41,13 +34,19 @@ function requestListener(request, response) {
 				response.end(json);
 			});
 	} else {
-		response.writeHead(404, headers);
-		response.end(notFoundMessage);
+		response.writeHead(404, responseHeaders);
+		response.end(JSON.stringify({ error: "Resource not found" }));
 	}
 }
 
 const server = http.createServer(requestListener);
 
-server.listen(PORT, function () {
-	console.log(`Server listening on http://${HOST}:${PORT}`);
-});
+server.listen(
+	{
+		host: "localhost",
+		port: 3000,
+	},
+	function () {
+		console.log("Server listening on port 3000");
+	}
+);
