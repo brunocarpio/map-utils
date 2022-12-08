@@ -1,22 +1,22 @@
+function splitRows(ff) {
+	return ff
+		.split(/\n/)
+		.filter((row) => row !== "")
+		.map((row) => row.split("|"));
+}
+
 let mapHandlers = {
 	ffToJson: function (ff, hasHeaderRow) {
 		// console.log('ff', ff)
 		// console.log('hasHeaderRow', hasHeaderRow)
 		if (!hasHeaderRow) {
-			let obj = ff
-				.split(/\n/)
-				.filter((row) => row !== "")
-				.map((row) => row.split("|"))
-				.map((arr) => Object.assign({}, arr));
+			let obj = splitRows(ff).map((arr) => Object.assign({}, arr));
 
 			// console.log(obj);
 			return JSON.stringify(obj);
 		}
 
-		let splittedRows = ff
-			.split(/\n/)
-			.filter((row) => row !== "")
-			.map((row) => row.split("|"));
+		let splittedRows = splitRows(ff);
 		// console.log(splittedRows);
 
 		let headers = splittedRows.shift();
