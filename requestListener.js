@@ -1,5 +1,5 @@
 const url = require("node:url");
-const maps = require("./mapHandlers");
+const mappings = require("./mappings");
 const logger = require("./logger");
 
 function requestListener(request, response) {
@@ -11,7 +11,7 @@ function requestListener(request, response) {
 	logger.log("headers", headers);
 
 	if (method === "POST" && parsedUrl.pathname === "/api/v1/ffToJson") {
-		console.log("POST /api/v1/ffToJson");
+		// console.log("POST /api/v1/ffToJson");
 		logger.log("POST /api/v1/ffToJson");
 		let body = [];
 		request
@@ -20,11 +20,12 @@ function requestListener(request, response) {
 			})
 			.on("end", function () {
 				body = Buffer.concat(body).toString();
-				console.log("body", body);
+				// console.log("body", body);
 				logger.log("body", body);
 				let hasHeaderRow = parsedUrl.query.hasHeaderRow === "true";
+				let delimiter = parsedUrl.query.delimiter;
 				logger.log("hasHeaderRow", hasHeaderRow);
-				let json = maps.ffToJson(body, hasHeaderRow);
+				let json = mappings.ffToJson(body, hasHeaderRow, delimiter);
 				response.writeHead(200, responseHeaders);
 				response.end(json);
 			});
